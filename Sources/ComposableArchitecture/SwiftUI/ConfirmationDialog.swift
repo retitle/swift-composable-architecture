@@ -236,11 +236,9 @@ extension View {
   ) -> some View {
 
     WithViewStore(store, removeDuplicates: { $0?.id == $1?.id }) { viewStore in
-      #if compiler(>=5.5) && canImport(_Concurrency) && !os(macOS)
-        self.actionSheet(item: viewStore.binding(send: dismiss)) { state in
-          state.toSwiftUIActionSheet(send: viewStore.send)
-        }
-      #endif
+      self.actionSheet(item: viewStore.binding(send: dismiss)) { state in
+        state.toSwiftUIActionSheet(send: viewStore.send)
+      }
     }
   }
 }
