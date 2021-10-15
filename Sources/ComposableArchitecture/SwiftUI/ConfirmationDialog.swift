@@ -236,24 +236,7 @@ extension View {
   ) -> some View {
 
     WithViewStore(store, removeDuplicates: { $0?.id == $1?.id }) { viewStore in
-      #if compiler(>=5.5) && canImport(_Concurrency)
-        if #available(iOS 15, tvOS 15, watchOS 8, *) {
-          self.confirmationDialog(
-            (viewStore.state?.title).map { Text($0) } ?? Text(""),
-            isPresented: viewStore.binding(send: dismiss).isPresent(),
-            titleVisibility: viewStore.state?.titleVisibility.toSwiftUI ?? .automatic,
-            presenting: viewStore.state,
-            actions: { $0.toSwiftUIActions(send: viewStore.send) },
-            message: { $0.message.map { Text($0) } }
-          )
-        } else {
-          #if !os(macOS)
-            self.actionSheet(item: viewStore.binding(send: dismiss)) { state in
-              state.toSwiftUIActionSheet(send: viewStore.send)
-            }
-          #endif
-        }
-      #elseif !os(macOS)
+      #if compiler(>=5.5) && canImport(_Concurrency) && !os(macOS)
         self.actionSheet(item: viewStore.binding(send: dismiss)) { state in
           state.toSwiftUIActionSheet(send: viewStore.send)
         }
